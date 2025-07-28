@@ -1,0 +1,321 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>You're Loved</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #ffe6f0;
+        }
+
+        #initialScreen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fff0f5;
+            text-align: center;
+        }
+
+        .button {
+            font-size: 24px;
+            margin: 10px;
+            padding: 15px 25px;
+            background-color: #ff69b4;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+
+            .button:hover {
+                transform: scale(1.05);
+            }
+
+        #giftScreen {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #gift {
+            width: 150px;
+            height: 150px;
+            cursor: pointer;
+        }
+
+        #messageContainer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .message {
+            position: absolute;
+            padding: 12px 18px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            opacity: 0;
+            animation: popIn 0.2s forwards;
+            background-color: pink;
+        }
+
+        @keyframes popIn {
+            to {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- First Screen -->
+    <div id="initialScreen">
+        <h1>Sup?</h1>
+        <button class="button" id="heyBtn">Hey</button>
+        <button class="button" id="nuhBtn">Nuh Uh</button>
+    </div>
+
+    <!-- Gift Screen -->
+    <div id="giftScreen">
+        <img src="https://thumbs.dreamstime.com/b/emoticon-giving-gift-white-background-38782367.jpg" id="gift" alt="gift emoji">
+    </div>
+
+    <div id="messageContainer"></div>
+
+    <script>
+        const heyBtn = document.getElementById('heyBtn');
+        const nuhBtn = document.getElementById('nuhBtn');
+        const initialScreen = document.getElementById('initialScreen');
+        const giftScreen = document.getElementById('giftScreen');
+        const gift = document.getElementById('gift');
+        const messageContainer = document.getElementById('messageContainer');
+
+        let heyFontSize = 24;
+        const shownMessages = new Set();
+
+        const romanticLines = [
+            "You're the rhythm in my heartbeat 🥁💓",
+            "In your smile, I found my sunrise 🌅",
+            "You're the kind of magic they write stories about ✨📖",
+            "I found peace in your chaos 🌪️💞",
+            "You're the voice in all my favorite songs 🎼",
+            "I love you more than yesterday, less than tomorrow ⏳💘",
+            "You're the color in my black and white world 🎨🖤",
+            "You're my secret place, my happy space 🛏️💫",
+            "Even a thousand lifetimes wouldn't be enough for you ⏳❤️‍🔥",
+            "You had me at my worst, you loved me the most 🌧️❤️",
+            "Main phir bhi tumko chahunga 🌌",
+            "Tera yaar hoon main 🤗",
+            "Sun raha hai na tu 💔",
+            "Kya mujhe pyaar hai 💞",
+            "Humdard... tu humdard hai 🩵",
+            "Bekhayali mein bhi tera hi khayal aaye 🌧️",
+            "Agar tum saath ho 🤝",
+            "Tum jo aaye zindagi mein baat ban gayi 🎶",
+            "Phir le aaya dil majboor kya keeje 🎻",
+            "Khairiyat poochho 💌",
+            "You are the calm in my chaos 💟",
+            "You feel like home 🏡",
+            "Every love story is beautiful, but ours is my favorite ✨",
+            "With you, time stands still ⏰",
+            "You're my heart's favorite song 🎧",
+            "I didn’t choose you, my heart did ❤️",
+            "You are the magic I was waiting for 🎇",
+            "My heart beats for you 🫀",
+            "I wish I could turn back the clock—I’d find you sooner ⏳",
+            "You're my always and forever 💞",
+            "You stole my heart, but I’ll let you keep it 🥹",
+            "You're the light in my dark 🌠",
+            "You’re the dream I never want to wake up from ☁️",
+            "Every piece of me loves every piece of you 🧩",
+            "You had me at hello 🥰",
+            "You're the moon to my night 🌙",
+            "I crave you in every moment 💓",
+            "Loving you is like breathing – I can’t stop 🌬️",
+            "You’re my sweetest hello and my hardest goodbye 👋💔",
+            "You're my once in a lifetime 💍",
+            "Main phir bhi tumko chahunga 🌌",
+            "Tera yaar hoon main 🤗",
+            "Sun raha hai na tu 💔",
+            "Kya mujhe pyaar hai 💞",
+            "Humdard... tu humdard hai 🩵",
+            "Bekhayali mein bhi tera hi khayal aaye 🌧️",
+            "Agar tum saath ho 🤝",
+            "Tum jo aaye zindagi mein baat ban gayi 🎶",
+            "Phir le aaya dil majboor kya keeje 🎻",
+            "Khairiyat poochho 💌",
+            "You're the rhythm in my heartbeat 🥁💓",
+            "In your smile, I found my sunrise 🌅",
+            "You're the kind of magic they write stories about ✨📖",
+            "I found peace in your chaos 🌪️💞",
+            "You're the voice in all my favorite songs 🎼",
+            "I love you more than yesterday, less than tomorrow ⏳💘",
+            "You're the color in my black and white world 🎨🖤",
+            "You're my secret place, my happy space 🛏️💫",
+            "Even a thousand lifetimes wouldn't be enough for you ⏳❤️‍🔥",
+            "You had me at my worst, you loved me the most 🌧️❤️",
+            "You're my favorite hello and my hardest goodbye 💞",
+            "You’re the reason I believe in love again ❤️",
+            "Holding your hand feels like holding the world 🌍🤝",
+            "You're not my number one — you're my only one 🫶",
+            "Every love song suddenly makes sense with you 🎵💘",
+            "Your eyes speak the language of my soul 👀✨",
+            "You’re my safe space in a chaotic world 🌪️🏡",
+            "Falling for you was the best accident of my life 🎯",
+            "Your laughter is my favorite melody 🎶😄",
+            "You make me believe in forever 💍💫",
+            "You're the reason I look forward to every day ☀️",
+            "I see my future in your eyes 🔮❤️",
+            "Even your silence comforts me 🌌🤫",
+            "You’ve bewitched me, body and soul 🌠💘",
+            "My heart found its rhythm in you 🎼🫀",
+            "You're the song I never skip 🎧💖",
+            "With you, I’ve found the meaning of love 💡💝",
+            "You're my today and all of my tomorrows ⏳💘",
+            "You and I are meant to be — like stars and sky 🌌⭐",
+            "You're the answer to every love letter I never sent 💌",
+            "You’re my last thought before sleep and first after waking 🛏️☀️",
+            "You are the dream I live wide awake ☁️👁️",
+            "I’m drunk on your love, no rehab needed 🍷❤️",
+            "My soul was waiting for yours across lifetimes 🔗💞",
+            "You’re the sparkle in my dullest days ✨🌧️",
+            "You’re the fire to my cold nights 🔥❄️",
+            "Your smile writes poetry on my heart 🖋️😊",
+            "Your voice is my favorite comfort sound 🎤💘",
+            "You're my sunshine on a rainy day 🌧️🌞",
+            "I fall for you more every second ⏰❤️",
+            "Your presence is my peace ☮️💗",
+            "My world begins and ends with you 🌍❤️‍🔥",
+            "You turn my 'what ifs' into 'always' 💭🔁",
+            "You breathe life into my dreams 🌬️✨",
+            "You're the moonlight to my darkest nights 🌙🖤",
+            "You're my unexpected miracle 🎁💕",
+            "Your love feels like magic I never believed in 🎇",
+            "You're the gravity that keeps me grounded 🌍🫀",
+            "I’m in awe of how much I love you 😍",
+            "You kiss my scars with your love 💋🩹",
+            "Your arms feel more like home than any place ever did 🏠🤗",
+            "You're my chapter one and my ever after 📖💞",
+            "You’re my reason and my rhyme 📝❤️",
+            "My heart wasn’t complete until it met yours 💓💓",
+            "Loving you is my favorite feeling 💝",
+            "Every time you say my name, I fall a little more 🥰",
+            "You’re the peace I never knew I needed 🕊️",
+            "You’re the melody that plays on loop in my soul 🎶🔁",
+            "You make me want to write poems with every heartbeat 💓✍️",
+            "No fairytale can compete with us 📚👑",
+            "You light up places in me I didn’t know existed 💡❤️‍🔥",
+            "Even eternity wouldn’t be enough with you ♾️💘",
+            "Tum paas aaye, yun muskuraye 🌸",
+            "Tumse milke aisa laga tumse milke 💓",
+            "Mujhko barsaat bana lo 🌧️",
+            "Raat bhar tera naam lete rahe 🌙",
+            "Pal pal dil ke paas tum rehti ho 💖",
+            "Jeene laga hoon pehle se zyada 💗",
+            "Tera chehra hai roshni jaise ✨",
+            "Tera intezaar hai har pal 💭",
+            "Dil ko tumse pyaar hua ❤️",
+            "Chura liya hai tumne jo dil ko 💘",
+            "Tera saath hai to mujhe kya kami hai 🤝",
+            "Tere bina jee na paayein hum 💔",
+            "Tu meri zindagi hai 🌈",
+            "Sab kuch bhool jaate hain tumhe dekh kar 🥺",
+            "Tum aaye zindagi mein bahaar banke 🌷",
+            "Tere naina bade kaatil 🔥",
+            "Tere liye duniya chhod di hai 🌍",
+            "Jab tak hai jaan, main tumse pyaar karunga 💞",
+            "Tum ho toh lagta hai ke zindagi chal rahi hai 🚶‍♀️",
+            "Tera deewana ho gaya hoon main 💫",
+            "Meri duniya hai tu 💌",
+            "Mujh mein tu basa 💟",
+            "Bas itna sa khwab hai 💭",
+            "Mera dil sirf tumhare liye dhadakta hai 🫀",
+            "Zindagi ke safar mein tu mera humsafar 💑",
+            "Pyar dosti hai ❤️",
+            "Tere bina ab toh na jeena gawara hai 💔",
+            "Mere dil mein ho tum 💘",
+            "Tere sang jeevan bitana hai 🌅",
+            "Har ghadi bas teri yaadon mein kho jata hoon 📸",
+            "Tere hone se hi hai zindagi meri 🌹",
+            "Jitni dafa dekhu tumhe, utna pyaar badhta hai 💓",
+            "Tu jo mila toh hai yeh lagta 💞",
+            "Tera naam dil pe likh chuka hoon ✍️",
+            "Khud ko tere kareeb paake sab kuch pa liya 🙏",
+            "Tere bina adhura hoon main 🕳️",
+            "Tumse hi toh meri subah hoti hai ☀️",
+            "Main sirf tera hone laga hoon 💘",
+            "Tum aaye zindagi mein noor ban ke 💡",
+            "Tum jo mil gaye ho toh yeh lagta hai ke jahan mil gaya 🌍",
+            "Ek din aap yun humko mil jayenge 💐",
+            "Tujhse juda hokar jee na payenge hum 💔",
+            "Tere jaise koi nahi 💫",
+            "Tu pyaar hai kisi aur ka 💭",
+            "Jab se mila hoon tujhse, main sirf tera ho gaya 💘",
+            "Meri har khushi hai tu 😊",
+            "Tu hai toh main hoon 🌠",
+            "Mera chand tu hi hai 🌙",
+            "Tere ishq mein dooba rehta hoon har waqt 💞",
+            "Tujhpe hi toh hai dil aaya 💝"
+
+        ];
+
+        const colors = ['#ff69b4', '#ff1493', '#ffc0cb', '#ffb6c1', '#db7093'];
+
+        nuhBtn.addEventListener('click', () => {
+            heyFontSize += 6;
+            heyBtn.style.fontSize = `${heyFontSize}px`;
+        });
+
+        heyBtn.addEventListener('click', () => {
+            initialScreen.style.display = 'none';
+            giftScreen.style.display = 'flex';
+        });
+
+        gift.addEventListener('click', () => {
+            gift.style.display = 'none';
+            popMessages();
+        });
+
+        function popMessages() {
+            const interval = setInterval(() => {
+                if (shownMessages.size >= romanticLines.length) {
+                    clearInterval(interval);
+                    return;
+                }
+
+                let msg;
+                do {
+                    msg = romanticLines[Math.floor(Math.random() * romanticLines.length)];
+                } while (shownMessages.has(msg));
+
+                shownMessages.add(msg);
+
+                const message = document.createElement('div');
+                message.classList.add('message');
+                message.style.top = `${Math.random() * window.innerHeight}px`;
+                message.style.left = `${Math.random() * window.innerWidth}px`;
+                message.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                message.textContent = msg;
+                messageContainer.appendChild(message);
+            }, 120); // messages pop fast!
+        }
+    </script>
+</body>
+</html>
