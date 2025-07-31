@@ -1,117 +1,86 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>You're Loved</title>
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            height: 100%;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            background-color: #ffe6f0;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Romantic Quote Explosion</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        #initialScreen {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #fff0f5;
-            text-align: center;
-        }
+    body {
+      background: url('https://media.istockphoto.com/id/1264814170/vector/sparkle-seamless-pattern-with-holographic-silver-glitter-hearts-on-white-background.jpg?s=612x612&w=0&k=20&c=ulywqURv_TjzarIy0J8UAclS9PER4FbYHnfikTGzwfw=') no-repeat center center/cover;
+      height: 100vh;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .button {
-            font-size: 24px;
-            margin: 10px;
-            padding: 15px 25px;
-            background-color: #ff69b4;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: transform 0.2s ease-in-out;
-        }
+    #gift {
+      cursor: pointer;
+      font-size: 5rem;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      transition: transform 0.3s ease;
+    }
 
-            .button:hover {
-                transform: scale(1.05);
-            }
+    #gift:hover {
+      transform: translate(-50%, -50%) scale(1.1);
+    }
 
-        #giftScreen {
-            display: none;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+    #container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
 
-        #gift {
-            width: 150px;
-            height: 150px;
-            cursor: pointer;
-        }
+    .quote {
+      position: absolute;
+      font-size: 1.5rem;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.6);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      animation: fadeIn 0.5s ease forwards;
+      white-space: nowrap;
+    }
 
-        #messageContainer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        .message {
-            position: absolute;
-            padding: 12px 18px;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 18px;
-            font-weight: bold;
-            opacity: 0;
-            animation: popIn 0.2s forwards;
-            background-color: pink;
-        }
-
-        @keyframes popIn {
-            to {
-                opacity: 1;
-                transform: scale(1.05);
-            }
-        }
-    </style>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  </style>
 </head>
 <body>
 
-    <!-- First Screen -->
-    <div id="initialScreen">
-        <h1>Sup?</h1>
-        <button class="button" id="heyBtn">Hey</button>
-        <button class="button" id="nuhBtn">Nuh Uh</button>
-    </div>
+  <!-- Clickable Gift Icon -->
+  <div id="gift">🎁</div>
 
-    <!-- Gift Screen -->
-    <div id="giftScreen">
-        <img src="https://thumbs.dreamstime.com/b/emoticon-giving-gift-white-background-38782367.jpg" id="gift" alt="gift emoji">
-    </div>
+  <!-- Container for exploding quotes -->
+  <div id="container"></div>
 
-    <div id="messageContainer"></div>
+  <!-- Audio Player -->
+  <audio id="bg-music" src="505.mp3" preload="auto"></audio>
 
-    <script>
-        const heyBtn = document.getElementById('heyBtn');
-        const nuhBtn = document.getElementById('nuhBtn');
-        const initialScreen = document.getElementById('initialScreen');
-        const giftScreen = document.getElementById('giftScreen');
-        const gift = document.getElementById('gift');
-        const messageContainer = document.getElementById('messageContainer');
-
-        let heyFontSize = 24;
-        const shownMessages = new Set();
-
-        const romanticLines = [
-            "You're the rhythm in my heartbeat 🥁💓",
+  <script>
+    const romanticLines = [
+      "You're the rhythm in my heartbeat 🥁💓",
             "In your smile, I found my sunrise 🌅",
             "You're the kind of magic they write stories about ✨📖",
             "I found peace in your chaos 🌪️💞",
@@ -273,49 +242,43 @@
             "Mera chand tu hi hai 🌙",
             "Tere ishq mein dooba rehta hoon har waqt 💞",
             "Tujhpe hi toh hai dil aaya 💝"
+    ];
 
-        ];
+    const container = document.getElementById("container");
+    const gift = document.getElementById("gift");
+    let usedIndexes = new Set();
 
-        const colors = ['#ff69b4', '#ff1493', '#ffc0cb', '#ffb6c1', '#db7093'];
+    function createQuote() {
+      if (usedIndexes.size === romanticLines.length) return;
 
-        nuhBtn.addEventListener('click', () => {
-            heyFontSize += 6;
-            heyBtn.style.fontSize = `${heyFontSize}px`;
-        });
+      let index;
+      do {
+        index = Math.floor(Math.random() * romanticLines.length);
+      } while (usedIndexes.has(index));
 
-        heyBtn.addEventListener('click', () => {
-            initialScreen.style.display = 'none';
-            giftScreen.style.display = 'flex';
-        });
+      usedIndexes.add(index);
+      const quote = document.createElement("div");
+      quote.classList.add("quote");
+      quote.innerText = romanticLines[index];
 
-        gift.addEventListener('click', () => {
-            gift.style.display = 'none';
-            popMessages();
-        });
+      quote.style.left = `${Math.random() * 90}%`;
+      quote.style.top = `${Math.random() * 90}%`;
 
-        function popMessages() {
-            const interval = setInterval(() => {
-                if (shownMessages.size >= romanticLines.length) {
-                    clearInterval(interval);
-                    return;
-                }
+      container.appendChild(quote);
+    }
 
-                let msg;
-                do {
-                    msg = romanticLines[Math.floor(Math.random() * romanticLines.length)];
-                } while (shownMessages.has(msg));
+    gift.addEventListener("click", () => {
+      document.getElementById("bg-music").play();
+      gift.style.display = "none";
 
-                shownMessages.add(msg);
-
-                const message = document.createElement('div');
-                message.classList.add('message');
-                message.style.top = `${Math.random() * window.innerHeight}px`;
-                message.style.left = `${Math.random() * window.innerWidth}px`;
-                message.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                message.textContent = msg;
-                messageContainer.appendChild(message);
-            }, 120); // messages pop fast!
+      let interval = setInterval(() => {
+        createQuote();
+        if (usedIndexes.size === romanticLines.length) {
+          clearInterval(interval);
         }
-    </script>
+      }, 150); // very fast
+    });
+  </script>
+
 </body>
 </html>
