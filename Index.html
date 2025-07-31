@@ -2,73 +2,284 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Surprise Gift</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Romantic Quote Explosion</title>
   <style>
-    body {
+    * {
       margin: 0;
       padding: 0;
-      background: url('https://media.istockphoto.com/id/1264814170/vector/sparkle-seamless-pattern-with-holographic-silver-glitter-hearts-on-white-background.jpg?s=612x612&w=0&k=20&c=ulywqURv_TjzarIy0J8UAclS9PER4FbYHnfikTGzwfw=') no-repeat center center fixed;
-      background-size: cover;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: url('https://media.istockphoto.com/id/1264814170/vector/sparkle-seamless-pattern-with-holographic-silver-glitter-hearts-on-white-background.jpg?s=612x612&w=0&k=20&c=ulywqURv_TjzarIy0J8UAclS9PER4FbYHnfikTGzwfw=') no-repeat center center/cover;
       height: 100vh;
+      overflow: hidden;
       font-family: 'Segoe UI', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
-    .gift-box {
-      width: 100px;
-      height: 100px;
-      background: linear-gradient(to bottom, #ffcc00, #ff9900);
-      border: 4px solid #000;
-      border-radius: 10px;
-      position: relative;
+    #gift {
       cursor: pointer;
-      animation: bounce 2s infinite;
-    }
-
-    .gift-box::before, .gift-box::after {
-      content: '';
+      font-size: 5rem;
       position: absolute;
-      background: red;
-    }
-
-    .gift-box::before {
-      width: 20px;
-      height: 100%;
-      left: 40px;
-      top: 0;
-    }
-
-    .gift-box::after {
-      height: 20px;
-      width: 100%;
-      top: 40px;
-      left: 0;
-    }
-
-    .ribbon {
-      position: absolute;
-      top: -20px;
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-      border-bottom: 20px solid red;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      transition: transform 0.3s ease;
     }
 
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
+    #gift:hover {
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    #container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .quote {
+      position: absolute;
+      font-size: 1.5rem;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.6);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      animation: fadeIn 0.5s ease forwards;
+      white-space: nowrap;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
   </style>
 </head>
 <body>
-  <div class="gift-box">
-    <div class="ribbon"></div>
-  </div>
+
+  <!-- Clickable Gift Icon -->
+  <div id="gift">🎁</div>
+
+  <!-- Container for exploding quotes -->
+  <div id="container"></div>
+
+  <!-- Audio Player -->
+  <audio id="bg-music" src="505.mp3" preload="auto"></audio>
+
+  <script>
+    const romanticLines = [
+      "You're the rhythm in my heartbeat 🥁💓",
+            "In your smile, I found my sunrise 🌅",
+            "You're the kind of magic they write stories about ✨📖",
+            "I found peace in your chaos 🌪️💞",
+            "You're the voice in all my favorite songs 🎼",
+            "I love you more than yesterday, less than tomorrow ⏳💘",
+            "You're the color in my black and white world 🎨🖤",
+            "You're my secret place, my happy space 🛏️💫",
+            "Even a thousand lifetimes wouldn't be enough for you ⏳❤️‍🔥",
+            "You had me at my worst, you loved me the most 🌧️❤️",
+            "Main phir bhi tumko chahunga 🌌",
+            "Tera yaar hoon main 🤗",
+            "Sun raha hai na tu 💔",
+            "Kya mujhe pyaar hai 💞",
+            "Humdard... tu humdard hai 🩵",
+            "Bekhayali mein bhi tera hi khayal aaye 🌧️",
+            "Agar tum saath ho 🤝",
+            "Tum jo aaye zindagi mein baat ban gayi 🎶",
+            "Phir le aaya dil majboor kya keeje 🎻",
+            "Khairiyat poochho 💌",
+            "You are the calm in my chaos 💟",
+            "You feel like home 🏡",
+            "Every love story is beautiful, but ours is my favorite ✨",
+            "With you, time stands still ⏰",
+            "You're my heart's favorite song 🎧",
+            "I didn’t choose you, my heart did ❤️",
+            "You are the magic I was waiting for 🎇",
+            "My heart beats for you 🫀",
+            "I wish I could turn back the clock—I’d find you sooner ⏳",
+            "You're my always and forever 💞",
+            "You stole my heart, but I’ll let you keep it 🥹",
+            "You're the light in my dark 🌠",
+            "You’re the dream I never want to wake up from ☁️",
+            "Every piece of me loves every piece of you 🧩",
+            "You had me at hello 🥰",
+            "You're the moon to my night 🌙",
+            "I crave you in every moment 💓",
+            "Loving you is like breathing – I can’t stop 🌬️",
+            "You’re my sweetest hello and my hardest goodbye 👋💔",
+            "You're my once in a lifetime 💍",
+            "Main phir bhi tumko chahunga 🌌",
+            "Tera yaar hoon main 🤗",
+            "Sun raha hai na tu 💔",
+            "Kya mujhe pyaar hai 💞",
+            "Humdard... tu humdard hai 🩵",
+            "Bekhayali mein bhi tera hi khayal aaye 🌧️",
+            "Agar tum saath ho 🤝",
+            "Tum jo aaye zindagi mein baat ban gayi 🎶",
+            "Phir le aaya dil majboor kya keeje 🎻",
+            "Khairiyat poochho 💌",
+            "You're the rhythm in my heartbeat 🥁💓",
+            "In your smile, I found my sunrise 🌅",
+            "You're the kind of magic they write stories about ✨📖",
+            "I found peace in your chaos 🌪️💞",
+            "You're the voice in all my favorite songs 🎼",
+            "I love you more than yesterday, less than tomorrow ⏳💘",
+            "You're the color in my black and white world 🎨🖤",
+            "You're my secret place, my happy space 🛏️💫",
+            "Even a thousand lifetimes wouldn't be enough for you ⏳❤️‍🔥",
+            "You had me at my worst, you loved me the most 🌧️❤️",
+            "You're my favorite hello and my hardest goodbye 💞",
+            "You’re the reason I believe in love again ❤️",
+            "Holding your hand feels like holding the world 🌍🤝",
+            "You're not my number one — you're my only one 🫶",
+            "Every love song suddenly makes sense with you 🎵💘",
+            "Your eyes speak the language of my soul 👀✨",
+            "You’re my safe space in a chaotic world 🌪️🏡",
+            "Falling for you was the best accident of my life 🎯",
+            "Your laughter is my favorite melody 🎶😄",
+            "You make me believe in forever 💍💫",
+            "You're the reason I look forward to every day ☀️",
+            "I see my future in your eyes 🔮❤️",
+            "Even your silence comforts me 🌌🤫",
+            "You’ve bewitched me, body and soul 🌠💘",
+            "My heart found its rhythm in you 🎼🫀",
+            "You're the song I never skip 🎧💖",
+            "With you, I’ve found the meaning of love 💡💝",
+            "You're my today and all of my tomorrows ⏳💘",
+            "You and I are meant to be — like stars and sky 🌌⭐",
+            "You're the answer to every love letter I never sent 💌",
+            "You’re my last thought before sleep and first after waking 🛏️☀️",
+            "You are the dream I live wide awake ☁️👁️",
+            "I’m drunk on your love, no rehab needed 🍷❤️",
+            "My soul was waiting for yours across lifetimes 🔗💞",
+            "You’re the sparkle in my dullest days ✨🌧️",
+            "You’re the fire to my cold nights 🔥❄️",
+            "Your smile writes poetry on my heart 🖋️😊",
+            "Your voice is my favorite comfort sound 🎤💘",
+            "You're my sunshine on a rainy day 🌧️🌞",
+            "I fall for you more every second ⏰❤️",
+            "Your presence is my peace ☮️💗",
+            "My world begins and ends with you 🌍❤️‍🔥",
+            "You turn my 'what ifs' into 'always' 💭🔁",
+            "You breathe life into my dreams 🌬️✨",
+            "You're the moonlight to my darkest nights 🌙🖤",
+            "You're my unexpected miracle 🎁💕",
+            "Your love feels like magic I never believed in 🎇",
+            "You're the gravity that keeps me grounded 🌍🫀",
+            "I’m in awe of how much I love you 😍",
+            "You kiss my scars with your love 💋🩹",
+            "Your arms feel more like home than any place ever did 🏠🤗",
+            "You're my chapter one and my ever after 📖💞",
+            "You’re my reason and my rhyme 📝❤️",
+            "My heart wasn’t complete until it met yours 💓💓",
+            "Loving you is my favorite feeling 💝",
+            "Every time you say my name, I fall a little more 🥰",
+            "You’re the peace I never knew I needed 🕊️",
+            "You’re the melody that plays on loop in my soul 🎶🔁",
+            "You make me want to write poems with every heartbeat 💓✍️",
+            "No fairytale can compete with us 📚👑",
+            "You light up places in me I didn’t know existed 💡❤️‍🔥",
+            "Even eternity wouldn’t be enough with you ♾️💘",
+            "Tum paas aaye, yun muskuraye 🌸",
+            "Tumse milke aisa laga tumse milke 💓",
+            "Mujhko barsaat bana lo 🌧️",
+            "Raat bhar tera naam lete rahe 🌙",
+            "Pal pal dil ke paas tum rehti ho 💖",
+            "Jeene laga hoon pehle se zyada 💗",
+            "Tera chehra hai roshni jaise ✨",
+            "Tera intezaar hai har pal 💭",
+            "Dil ko tumse pyaar hua ❤️",
+            "Chura liya hai tumne jo dil ko 💘",
+            "Tera saath hai to mujhe kya kami hai 🤝",
+            "Tere bina jee na paayein hum 💔",
+            "Tu meri zindagi hai 🌈",
+            "Sab kuch bhool jaate hain tumhe dekh kar 🥺",
+            "Tum aaye zindagi mein bahaar banke 🌷",
+            "Tere naina bade kaatil 🔥",
+            "Tere liye duniya chhod di hai 🌍",
+            "Jab tak hai jaan, main tumse pyaar karunga 💞",
+            "Tum ho toh lagta hai ke zindagi chal rahi hai 🚶‍♀️",
+            "Tera deewana ho gaya hoon main 💫",
+            "Meri duniya hai tu 💌",
+            "Mujh mein tu basa 💟",
+            "Bas itna sa khwab hai 💭",
+            "Mera dil sirf tumhare liye dhadakta hai 🫀",
+            "Zindagi ke safar mein tu mera humsafar 💑",
+            "Pyar dosti hai ❤️",
+            "Tere bina ab toh na jeena gawara hai 💔",
+            "Mere dil mein ho tum 💘",
+            "Tere sang jeevan bitana hai 🌅",
+            "Har ghadi bas teri yaadon mein kho jata hoon 📸",
+            "Tere hone se hi hai zindagi meri 🌹",
+            "Jitni dafa dekhu tumhe, utna pyaar badhta hai 💓",
+            "Tu jo mila toh hai yeh lagta 💞",
+            "Tera naam dil pe likh chuka hoon ✍️",
+            "Khud ko tere kareeb paake sab kuch pa liya 🙏",
+            "Tere bina adhura hoon main 🕳️",
+            "Tumse hi toh meri subah hoti hai ☀️",
+            "Main sirf tera hone laga hoon 💘",
+            "Tum aaye zindagi mein noor ban ke 💡",
+            "Tum jo mil gaye ho toh yeh lagta hai ke jahan mil gaya 🌍",
+            "Ek din aap yun humko mil jayenge 💐",
+            "Tujhse juda hokar jee na payenge hum 💔",
+            "Tere jaise koi nahi 💫",
+            "Tu pyaar hai kisi aur ka 💭",
+            "Jab se mila hoon tujhse, main sirf tera ho gaya 💘",
+            "Meri har khushi hai tu 😊",
+            "Tu hai toh main hoon 🌠",
+            "Mera chand tu hi hai 🌙",
+            "Tere ishq mein dooba rehta hoon har waqt 💞",
+            "Tujhpe hi toh hai dil aaya 💝"
+    ];
+
+    const container = document.getElementById("container");
+    const gift = document.getElementById("gift");
+    let usedIndexes = new Set();
+
+    function createQuote() {
+      if (usedIndexes.size === romanticLines.length) return;
+
+      let index;
+      do {
+        index = Math.floor(Math.random() * romanticLines.length);
+      } while (usedIndexes.has(index));
+
+      usedIndexes.add(index);
+      const quote = document.createElement("div");
+      quote.classList.add("quote");
+      quote.innerText = romanticLines[index];
+
+      quote.style.left = `${Math.random() * 90}%`;
+      quote.style.top = `${Math.random() * 90}%`;
+
+
+      container.appendChild(quote);
+    }
+
+    gift.addEventListener("click", () => {
+      document.getElementById("bg-music").play();
+      gift.style.display = "none";
+
+      let interval = setInterval(() => {
+        createQuote();
+        if (usedIndexes.size === romanticLines.length) {
+          clearInterval(interval);
+        }
+      }, 150); // very fast
+    });
+  </script>
+
 </body>
 </html>
